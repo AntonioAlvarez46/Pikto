@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Lista en PriceBot</title>
+<meta property="og:title" content="Una lista en PriceBot">
+<meta property="og:description" content="Mira los artículos y su mejor precio, al día.">
+<style>
+  :root { --bg:#f6f8f7; --card:#fff; --text:#17201c; --muted:#5b6762; --accent:#0f7b5f; --accent-bg:#d9efe7; --line:#e3e8e5; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#101513; --card:#18201d; --text:#e7ece9; --muted:#9aa7a1; --accent:#5fd0aa; --accent-bg:#173a2f; --line:#26302c; } }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.4 -apple-system, system-ui, "Segoe UI", Roboto, sans-serif; }
+  main { max-width:640px; margin:0 auto; padding:20px 16px 48px; }
+  h1 { font-size:24px; margin:4px 0 2px; }
+  .brand { color:var(--accent); font-weight:700; font-size:14px; letter-spacing:.02em; }
+  .muted { color:var(--muted); font-size:14px; }
+  .open { display:block; text-align:center; margin:16px 0; padding:14px; border-radius:12px; background:var(--accent); color:#fff; font-weight:700; text-decoration:none; }
+  @media (prefers-color-scheme: dark) { .open { color:#06201a; } }
+  .total { background:var(--accent-bg); border-radius:14px; padding:14px 16px; margin:12px 0; }
+  .total b { font-size:24px; display:block; }
+  .item { display:flex; gap:12px; align-items:center; background:var(--card); border:1px solid var(--line); border-radius:14px; padding:10px; margin:10px 0; text-decoration:none; color:inherit; }
+  .item img, .item .ph { width:56px; height:56px; object-fit:contain; border-radius:8px; background:#fff; flex:none; }
+  .item .ph { background:var(--line); }
+  .item .name { font-weight:600; overflow-wrap:anywhere; }
+  .price { color:var(--accent); font-weight:800; }
+  .empty, .error { text-align:center; padding:48px 8px; color:var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <div class="brand">PriceBot</div>
+  <h1 id="title">Cargando la lista…</h1>
+  <div class="muted" id="sub"></div>
+  <a class="open" id="open" href="#" hidden>Abrir en la app PriceBot</a>
+  <div id="content"></div>
+  <p class="muted" id="hint" hidden>¿No tienes la app? Puedes ver aquí la lista con los precios. Pulsa un artículo para ir a la tienda más barata.</p>
+</main>
+<script>
+const SUPABASE_URL = "https://fczzeozsrfjjufdrwnsl.supabase.co";
+const KEY = "sb_publishable_-fMJlYi63zcAdxSWIXwQDw_zsmUNe-e";
+const STORES = {game:"GAME",xtralife:"Xtralife",mediamarkt:"MediaMarkt",wakkap:"Wakkap",juguettos:"Juguettos",toysrus:"Toys R Us",
+  juguetilandia:"Juguetilandia",drim:"Drim",kidinn:"Kidinn",laie:"Laie",todostuslibros:"Todostuslibros",
+  bajoelvolcan:"Bajo el Volcán",popularlibros:"Popular Libros",discosparadiso:"Discos Paradiso"};
+const euro = c => (c/100).toLocaleString("es-ES", {style:"currency", currency:"EUR"});
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const safeUrl = u => /^https:\/\//.test(u || "") ? u : null;
+
+async function api(path, body) {
+  const r = await fetch(SUPABASE_URL + "/rest/v1/" + path, {
+    method: body ? "POST" : "GET",
+    headers: {apikey: KEY, Authorization: "Bearer " + KEY, "Content-Type": "application/json"},
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  if (!r.ok) throw new Error("HTTP " + r.status);
+  return r.json();
+}
+
+(async () => {
+  const token = new URLSearchParams(location.search).get("lista") || "";
+  const $ = id => document.getElementById(id);
+  if (!/^[a-f0-9]{32}$/.test(token)) { $("title").textContent = "Enlace no válido"; return; }
+  const open = $("open");
+  open.href = "pricebot://lista/" + token;
+  open.hidden = false;
+  try {
+    const rows = await api("rpc/get_shared_list", {p_token: token});
+    if (!rows.length) {
+      $("title").textContent = "Esta lista ya no está disponible";
+      $("sub").textContent = "Puede que la hayan borrado o que hayan cambiado el enlace.";
+      open.hidden = true;
+      return;
+    }
+    const name = rows[0].list_name;
+    document.title = name + " · PriceBot";
+    $("title").textContent = name;
+    const ids = rows.map(r => r.product_id).filter(Boolean);
+    let products = [];
+    if (ids.length) {
+      const got = await api("product_overview?select=id,name,image_url,best_price_cents,best_store,best_url&id=in.(" + ids.join(",") + ")");
+      const byId = Object.fromEntries(got.map(p => [p.id, p]));
+      products = ids.map(id => byId[id]).filter(Boolean);
+    }
+    $("hint").hidden = false;
+    if (!products.length) { $("content").innerHTML = '<div class="empty">La lista está vacía.</div>'; return; }
+    const priced = products.filter(p => p.best_price_cents != null);
+    const total = priced.reduce((s, p) => s + p.best_price_cents, 0);
+    $("sub").textContent = products.length === 1 ? "1 artículo" : products.length + " artículos";
+    let html = '<div class="total">Total<b>' + euro(total) + '</b><span class="muted">Comprando cada uno en la tienda más barata'
+      + (priced.length < products.length ? " · " + (products.length - priced.length) + " sin precio ahora" : "") + "</span></div>";
+    for (const p of products) {
+      const url = safeUrl(p.best_url);
+      const img = safeUrl(p.image_url);
+      const price = p.best_price_cents != null
+        ? '<span class="price">' + euro(p.best_price_cents) + '</span> <span class="muted">en ' + esc(STORES[p.best_store] || p.best_store) + "</span>"
+        : '<span class="muted">Sin precio ahora</span>';
+      html += (url ? '<a class="item" href="' + esc(url) + '" target="_blank" rel="noopener">' : '<div class="item">')
+        + (img ? '<img src="' + esc(img) + '" alt="" loading="lazy">' : '<div class="ph"></div>')
+        + '<div><div class="name">' + esc(p.name) + "</div><div>" + price + "</div></div>"
+        + (url ? "</a>" : "</div>");
+    }
+    $("content").innerHTML = html;
+  } catch (e) {
+    $("title").textContent = "No se pudo cargar la lista";
+    $("content").innerHTML = '<div class="error">Revisa tu conexión e inténtalo de nuevo.</div>';
+  }
+})();
+</script>
+</body>
+</html>
