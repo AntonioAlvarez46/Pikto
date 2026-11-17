@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Lista en PriceBot</title>
-<meta property="og:title" content="Una lista en PriceBot">
+<title>Lista en Pikto</title>
+<meta property="og:title" content="Una lista en Pikto">
 <meta property="og:description" content="Mira los artículos y su mejor precio, al día.">
 <style>
   :root { --bg:#f6f8f7; --card:#fff; --text:#17201c; --muted:#5b6762; --accent:#0f7b5f; --accent-bg:#d9efe7; --line:#e3e8e5; }
@@ -30,10 +30,10 @@
 </head>
 <body>
 <main>
-  <div class="brand">PriceBot</div>
+  <div class="brand">Pikto</div>
   <h1 id="title">Cargando la lista…</h1>
   <div class="muted" id="sub"></div>
-  <a class="open" id="open" href="#" hidden>Abrir en la app PriceBot</a>
+  <a class="open" id="open" href="#" hidden>Abrir en la app Pikto</a>
   <div id="content"></div>
   <p class="muted" id="hint" hidden>¿No tienes la app? Puedes ver aquí la lista con los precios. Pulsa un artículo para ir a la tienda más barata.</p>
 </main>
@@ -73,7 +73,7 @@ async function api(path, body) {
       return;
     }
     const name = rows[0].list_name;
-    document.title = name + " · PriceBot";
+    document.title = name + " · Pikto";
     $("title").textContent = name;
     const ids = rows.map(r => r.product_id).filter(Boolean);
     let products = [];
