@@ -60,7 +60,7 @@
   <section class="hero">
     <div class="brand">Pikto</div>
     <h1>El mejor precio, y un aviso cuando baje</h1>
-    <p>Pikto compara los precios de videojuegos, juguetes, libros y música en las tiendas españolas. Sigue lo que quieres y te avisamos en cuanto baja de precio.</p>
+    <p>Pikto compara los precios de videojuegos, juguetes, libros, música y cartas coleccionables en las tiendas españolas. Sigue lo que quieres y te avisamos en cuanto baja de precio.</p>
     <span class="soon">Próximamente en App Store y Google Play</span>
   </section>
 
@@ -78,6 +78,7 @@
     <div class="cat"><b>🧸 Juguetes</b><span>Toys R Us, Juguettos, Juguetilandia, Drim, Kidinn</span></div>
     <div class="cat"><b>📖 Libros</b><span>Casa del Libro, Laie, Todostuslibros, Bajo el Volcán</span></div>
     <div class="cat"><b>💿 Música</b><span>MediaMarkt, Discos Paradiso</span></div>
+    <div class="cat"><b>🃏 Cartas</b><span>Pokémon, One Piece, Magic, Yu-Gi-Oh!, Lorcana… en Dracotienda, Magic Barcelona, Toys R Us, MediaMarkt y más</span></div>
   </div>
   <p class="muted">Precios en euros con IVA, tal como los publica cada tienda. Los gastos de envío se calculan en la tienda al comprar.</p>
 
@@ -108,7 +109,7 @@ const KEY = "sb_publishable_-fMJlYi63zcAdxSWIXwQDw_zsmUNe-e";
 const CONTACT = "";
 const STORES = {game:"GAME",xtralife:"Xtralife",mediamarkt:"MediaMarkt",wakkap:"Wakkap",juguettos:"Juguettos",toysrus:"Toys R Us",
   juguetilandia:"Juguetilandia",drim:"Drim",kidinn:"Kidinn",laie:"Laie",todostuslibros:"Todostuslibros",
-  bajoelvolcan:"Bajo el Volcán",popularlibros:"Popular Libros",casadellibro:"Casa del Libro",discosparadiso:"Discos Paradiso"};
+  bajoelvolcan:"Bajo el Volcán",popularlibros:"Popular Libros",casadellibro:"Casa del Libro",discosparadiso:"Discos Paradiso",dracotienda:"Dracotienda",magicbarcelona:"Magic Barcelona"};
 const euro = c => (c/100).toLocaleString("es-ES", {style:"currency", currency:"EUR"});
 const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const safeUrl = u => /^https:\/\//.test(u || "") ? u : null;
