@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex">
-<title>Lista en Pikto</title>
-<meta property="og:title" content="Una lista en Pikto">
-<meta property="og:description" content="Mira los artículos y su mejor precio, al día.">
+<title>Pikto · Compara precios y te avisa cuando bajan</title>
+<meta name="description" content="Pikto compara los precios de videojuegos, juguetes, libros y música en las tiendas españolas y te avisa cuando bajan.">
+<meta property="og:title" content="Pikto · Compara precios y te avisa cuando bajan">
+<meta property="og:description" content="Videojuegos, juguetes, libros y música: el mejor precio en las tiendas españolas, con avisos de bajada y listas para compartir.">
 <style>
   :root { --bg:#f6f8f7; --card:#fff; --text:#17201c; --muted:#5b6762; --accent:#0f7b5f; --accent-bg:#d9efe7; --line:#e3e8e5; }
   @media (prefers-color-scheme: dark) { :root { --bg:#101513; --card:#18201d; --text:#e7ece9; --muted:#9aa7a1; --accent:#5fd0aa; --accent-bg:#173a2f; --line:#26302c; } }
@@ -26,10 +26,28 @@
   .item .name { font-weight:600; overflow-wrap:anywhere; }
   .price { color:var(--accent); font-weight:800; }
   .empty, .error { text-align:center; padding:48px 8px; color:var(--muted); }
+  /* Presentación */
+  .hero { padding:28px 0 8px; }
+  .hero h1 { font-size:34px; line-height:1.15; margin:8px 0 10px; }
+  .hero p { font-size:18px; color:var(--muted); margin:0; }
+  .soon { display:inline-block; margin-top:18px; padding:8px 14px; border-radius:999px; background:var(--accent-bg); color:var(--accent); font-weight:700; font-size:14px; }
+  h2 { font-size:20px; margin:32px 0 12px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:12px; }
+  .feature { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px; }
+  .feature b { display:block; margin-bottom:4px; }
+  .feature span { color:var(--muted); font-size:15px; }
+  .cats { display:grid; gap:10px; }
+  .cat { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:12px 16px; }
+  .cat b { display:block; }
+  .cat span { color:var(--muted); font-size:15px; }
+  .legal p, .legal li { color:var(--muted); font-size:15px; }
+  .legal ul { padding-left:20px; }
+  footer { margin-top:40px; padding-top:16px; border-top:1px solid var(--line); color:var(--muted); font-size:13px; }
+  a.link { color:var(--accent); }
 </style>
 </head>
 <body>
-<main>
+<main id="listView" hidden>
   <div class="brand">Pikto</div>
   <h1 id="title">Cargando la lista…</h1>
   <div class="muted" id="sub"></div>
@@ -37,12 +55,59 @@
   <div id="content"></div>
   <p class="muted" id="hint" hidden>¿No tienes la app? Puedes ver aquí la lista con los precios. Pulsa un artículo para ir a la tienda más barata.</p>
 </main>
+
+<main id="landing">
+  <section class="hero">
+    <div class="brand">Pikto</div>
+    <h1>El mejor precio, y un aviso cuando baje</h1>
+    <p>Pikto compara los precios de videojuegos, juguetes, libros y música en las tiendas españolas. Sigue lo que quieres y te avisamos en cuanto baja de precio.</p>
+    <span class="soon">Próximamente en App Store y Google Play</span>
+  </section>
+
+  <h2>Cómo funciona</h2>
+  <div class="grid">
+    <div class="feature"><b>🔎 Busca</b><span>Escribe lo que buscas ("Mario Kart World", "LEGO Botanicals", "Dune") y Pikto lo busca en las tiendas y te enseña dónde está más barato.</span></div>
+    <div class="feature"><b>🔔 Sigue y te avisamos</b><span>Pulsa "Seguir" y revisamos el precio cada hora. Si baja, o llega al precio que tú quieras, te llega una notificación.</span></div>
+    <div class="feature"><b>📚 Todas las ediciones</b><span>Estándar, Deluxe, Coleccionista, tapa dura, bolsillo, vinilo… cada edición y cada consola por separado, con sus tiendas.</span></div>
+    <div class="feature"><b>🎁 Listas para compartir</b><span>Haz tu lista (por ejemplo, la de Reyes) y compártela por WhatsApp: quien la abra verá los precios al día y el total.</span></div>
+  </div>
+
+  <h2>Qué compara</h2>
+  <div class="cats">
+    <div class="cat"><b>🎮 Videojuegos</b><span>GAME, Xtralife, MediaMarkt, Wakkap</span></div>
+    <div class="cat"><b>🧸 Juguetes</b><span>Toys R Us, Juguettos, Juguetilandia, Drim, Kidinn</span></div>
+    <div class="cat"><b>📖 Libros</b><span>Casa del Libro, Laie, Todostuslibros, Bajo el Volcán</span></div>
+    <div class="cat"><b>💿 Música</b><span>MediaMarkt, Discos Paradiso</span></div>
+  </div>
+  <p class="muted">Precios en euros con IVA, tal como los publica cada tienda. Los gastos de envío se calculan en la tienda al comprar.</p>
+
+  <section class="legal">
+    <h2>Transparencia</h2>
+    <p>Pikto es gratuito para quien compara. Algunos enlaces a tiendas pueden ser enlaces de afiliado: si compras a través de ellos, Pikto puede recibir una pequeña comisión de la tienda, sin que a ti te cueste más. Eso nunca cambia el orden: las ofertas se ordenan siempre por precio.</p>
+
+    <h2>Privacidad</h2>
+    <ul>
+      <li>Para seguir artículos y crear listas necesitas una cuenta con tu email.</li>
+      <li>Guardamos lo que sigues, tus listas y tus avisos para poder enviártelos. Nadie más los ve, salvo las listas que tú compartas con su enlace.</li>
+      <li>Si activas las notificaciones, guardamos el identificador de tu móvil para enviártelas.</li>
+      <li>No vendemos tus datos ni los usamos para publicidad.</li>
+    </ul>
+  </section>
+
+  <section id="contact" hidden>
+    <h2>Contacto</h2>
+    <p>¿Tienes una tienda y quieres aparecer en Pikto, o tienes cualquier duda? Escríbenos a <a class="link" id="contactLink" href="#"></a>.</p>
+  </section>
+
+  <footer>© Pikto · Comparador de precios para España</footer>
+</main>
 <script>
 const SUPABASE_URL = "https://fczzeozsrfjjufdrwnsl.supabase.co";
 const KEY = "sb_publishable_-fMJlYi63zcAdxSWIXwQDw_zsmUNe-e";
+const CONTACT = "";
 const STORES = {game:"GAME",xtralife:"Xtralife",mediamarkt:"MediaMarkt",wakkap:"Wakkap",juguettos:"Juguettos",toysrus:"Toys R Us",
   juguetilandia:"Juguetilandia",drim:"Drim",kidinn:"Kidinn",laie:"Laie",todostuslibros:"Todostuslibros",
-  bajoelvolcan:"Bajo el Volcán",popularlibros:"Popular Libros",discosparadiso:"Discos Paradiso"};
+  bajoelvolcan:"Bajo el Volcán",popularlibros:"Popular Libros",casadellibro:"Casa del Libro",discosparadiso:"Discos Paradiso"};
 const euro = c => (c/100).toLocaleString("es-ES", {style:"currency", currency:"EUR"});
 const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const safeUrl = u => /^https:\/\//.test(u || "") ? u : null;
@@ -58,8 +123,19 @@ async function api(path, body) {
 }
 
 (async () => {
-  const token = new URLSearchParams(location.search).get("lista") || "";
   const $ = id => document.getElementById(id);
+  const params = new URLSearchParams(location.search);
+  if (!params.has("lista")) {  // sin enlace de lista: la presentación de Pikto
+    if (CONTACT && CONTACT.includes("@") && !CONTACT.startsWith("__")) {
+      $("contactLink").href = "mailto:" + CONTACT;
+      $("contactLink").textContent = CONTACT;
+      $("contact").hidden = false;
+    }
+    return;
+  }
+  $("landing").hidden = true;
+  $("listView").hidden = false;
+  const token = params.get("lista") || "";
   if (!/^[a-f0-9]{32}$/.test(token)) { $("title").textContent = "Enlace no válido"; return; }
   const open = $("open");
   open.href = "pricebot://lista/" + token;
